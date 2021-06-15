@@ -1,3 +1,4 @@
+using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,18 +19,20 @@ namespace BaseProjectAPI
 {
     public class Startup
     {
+        public IConfiguration _configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BaseDataContext>(c => {
-                c.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
+                c.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddControllers();
@@ -37,11 +40,17 @@ namespace BaseProjectAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BaseProjectAPI", Version = "v1" });
             });
+
+            #region Cors service: enable policy cors service
+            services.ConfigureCors(_configuration);
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(CorsExtension.AllowSpecificOrigins);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
