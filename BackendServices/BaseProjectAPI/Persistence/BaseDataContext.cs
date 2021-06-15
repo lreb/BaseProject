@@ -1,9 +1,6 @@
 ﻿using BaseProjectAPI.Domain.Models;
+using BaseProjectAPI.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Persistence
 {
@@ -15,5 +12,14 @@ namespace BaseProjectAPI.Persistence
         }
 
         public DbSet<Item> Items { get; set; }
+
+        /// <summary>
+        /// Executed when run Add-Migration
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+        }
     }
 }

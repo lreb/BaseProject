@@ -1,12 +1,10 @@
-﻿using System;
+﻿using BaseProjectAPI.Domain.Models;
+using BaseProjectAPI.Persistence;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BaseProjectAPI.Domain.Models;
-using BaseProjectAPI.Persistence;
 
 namespace BaseProjectAPI.Controllers
 {
