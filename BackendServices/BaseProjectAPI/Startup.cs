@@ -51,11 +51,21 @@ namespace BaseProjectAPI
         {
             app.UseCors(CorsExtension.AllowSpecificOrigins);
 
-            if (env.IsDevelopment())
+            if (env.IsLocal())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
+            }
+            else if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else if (env.IsStaging())
+            {
+            }
+            else
+            {
             }
 
             app.UseHttpsRedirection();
