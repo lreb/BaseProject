@@ -23,6 +23,14 @@ namespace BaseProjectAPI.Service.Items
                 .EnabledItems()
                 .SpecificYearsAgo(5)
                 .ToListAsync();
+
+            // just an example how to call Expression Func
+            // bool d = false;
+            // foreach (var item in r)
+            // {
+            //    d = ItemFilters.IsEnabledExpression.Compile()(item);
+            // }
+
         }
 
         public async Task<Item> GetItemById(int id)

@@ -30,6 +30,12 @@ namespace BaseProjectAPI.Service.Items.Queries
                 _ItemService = ItemService;
             }
 
+            /// <summary>
+            /// Handle request for all items
+            /// </summary>
+            /// <param name="query">Client request object</param>
+            /// <param name="cancellationToken"><see cref="CancellationToken"/></param>
+            /// <returns></returns>
             public async Task<IEnumerable<Item>> Handle(GetAllItemsQuery query, CancellationToken cancellationToken)
             {
                 return await _ItemService.GetItemsList();

@@ -1,12 +1,7 @@
 ﻿using BaseProjectAPI.Domain.Models;
-using BaseProjectAPI.Persistence;
-using BaseProjectAPI.Service.Items;
 using BaseProjectAPI.Service.Items.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Controllers
@@ -33,18 +28,6 @@ namespace BaseProjectAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetItems()
         {
-            //var r = await _context.Items
-            //    .EnabledItems()
-            //    .SpecificYearsAgo(5)
-            //    .ToListAsync();
-
-            //bool d = false;
-            //foreach (var item in r)
-            //{
-            //    d = ItemFilters.IsEnabledExpression.Compile()(item);
-            //}
-
-            //return Ok(r);
             return Ok(await _mediator.Send(new GetAllItemsQuery()));
         }
 
