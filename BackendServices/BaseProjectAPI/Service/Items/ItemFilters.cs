@@ -37,7 +37,5 @@ namespace BaseProjectAPI.Service.Items
         /// Expression to validate if Item is enabled
         /// </summary>
         public static Expression<Func<Item, bool>> IsEnabledExpression { get; } = item => item.IsEnabled;
-
-
     }
 }

@@ -2,7 +2,6 @@
 using BaseProjectAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Service.Items
@@ -30,7 +29,6 @@ namespace BaseProjectAPI.Service.Items
             // {
             //    d = ItemFilters.IsEnabledExpression.Compile()(item);
             // }
-
         }
 
         public async Task<Item> GetItemById(int id)

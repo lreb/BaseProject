@@ -60,8 +60,14 @@ namespace BaseProjectAPI
                 .AddInMemoryStorage();
             #endregion
 
+            #region DI
             services.AddScoped<IItemsService, ItemsService>();
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            #endregion
+
+            #region automapper
+            services.AddAutoMapper(typeof(Startup));
+            #endregion
         }
 
         /// <summary>
