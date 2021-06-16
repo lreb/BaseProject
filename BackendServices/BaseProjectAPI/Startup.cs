@@ -19,16 +19,24 @@ namespace BaseProjectAPI
 {
     public class Startup
     {
+        /// <summary>
+        /// Configurations services
+        /// </summary>
         public IConfiguration _configuration { get; }
 
+        /// <summary>
+        /// Constructor where we inject the configuration settings
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container. 
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BaseDataContext>(c => {
@@ -36,17 +44,22 @@ namespace BaseProjectAPI
             });
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BaseProjectAPI", Version = "v1" });
-            });
+
+            #region Swagger service
+            // enable swagger service
+            services.ConfigureSwaggerExtension(_configuration);
+            #endregion
 
             #region Cors service: enable policy cors service
             services.ConfigureCors(_configuration);
             #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline. 
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/></param>
+        /// <param name="env"><see cref="IWebHostEnvironment"/></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(CorsExtension.AllowSpecificOrigins);
@@ -56,16 +69,20 @@ namespace BaseProjectAPI
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
+                app.EnableSwaggerPipeline(_configuration);
             }
             else if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.EnableSwaggerPipeline(_configuration);
             }
             else if (env.IsStaging())
             {
+                app.EnableSwaggerPipeline(_configuration);
             }
             else
             {
+                app.EnableSwaggerPipeline(_configuration);
             }
 
             app.UseHttpsRedirection();

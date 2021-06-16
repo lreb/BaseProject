@@ -15,7 +15,7 @@ namespace BaseProjectAPI.Persistence.Seeds
         /// Execute pending migrations when the applications starts
         /// </summary>
         /// <param name="host"></param>
-        /// <returns></returns>
+        /// <returns><see cref="IHost"/></returns>
         public static IHost MigrateDatabase(this IHost host)
         {
             using (var scope = host.Services.CreateScope())
