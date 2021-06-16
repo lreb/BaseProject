@@ -1,5 +1,7 @@
 using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
+using BaseProjectAPI.Service.Items;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace BaseProjectAPI
 {
@@ -56,6 +59,9 @@ namespace BaseProjectAPI
             services.AddHealthChecksUI()
                 .AddInMemoryStorage();
             #endregion
+
+            services.AddScoped<IItemsService, ItemsService>();
+            services.AddMediatR(Assembly.GetExecutingAssembly());
         }
 
         /// <summary>
