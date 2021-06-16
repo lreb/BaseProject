@@ -1,5 +1,6 @@
 ﻿using BaseProjectAPI.Domain.Models;
 using BaseProjectAPI.Persistence;
+using BaseProjectAPI.Service.Items;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -19,16 +20,30 @@ namespace BaseProjectAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Items
+        /// <summary>
+        /// Get all items
+        /// </summary>
+        /// <returns><see cref="Item"/></returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+        public async Task<IActionResult> GetItems()
         {
-            return await _context.Items.ToListAsync();
+            var r = await _context.Items
+                .EnabledItems()
+                .SpecificYearsAgo(5)
+                .ToListAsync();
+
+            bool d = false;
+            foreach (var item in r)
+            {
+                d = ItemFilters.IsEnabledExpression.Compile()(item);
+            }
+
+            return Ok(r);
         }
 
         // GET: api/Items/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Item>> GetItem(long id)
+        public async Task<IActionResult> GetItem(long id)
         {
             var item = await _context.Items.FindAsync(id);
 
@@ -37,7 +52,7 @@ namespace BaseProjectAPI.Controllers
                 return NotFound();
             }
 
-            return item;
+            return Ok(item);
         }
 
         // PUT: api/Items/5
