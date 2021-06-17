@@ -8,7 +8,7 @@ namespace BaseProjectAPI.Domain.MappingProfiles
     {
         public ItemProfile()
         {
-            CreateMap<Item, ItemViewModel>().ForMember(destination => destination.HealthyStock, opt => opt.Condition(src => !(src.Quantity > 2 )));
+            CreateMap<Item, ItemViewModel>();
         }
     }
 }

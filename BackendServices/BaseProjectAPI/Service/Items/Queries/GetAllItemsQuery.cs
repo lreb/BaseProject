@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using BaseProjectAPI.Domain.Models;
 using BaseProjectAPI.Domain.ViewModels;
 using MediatR;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace BaseProjectAPI.Service.Items.Queries
 {
@@ -50,6 +48,10 @@ namespace BaseProjectAPI.Service.Items.Queries
             {
                 var items = await _ItemService.GetItemsList();
                 var itemsViewModel = _mapper.Map<IEnumerable<ItemViewModel>>(items);
+                foreach (var item in itemsViewModel)
+                {
+                    item.StockStatus = ItemFilters.GetStockStatus(item.Quantity);
+                }
                 return itemsViewModel;
             }
         }

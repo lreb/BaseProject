@@ -1,5 +1,7 @@
-﻿using BaseProjectAPI.Domain.Models;
+﻿using BaseProjectAPI.Domain.Enums;
+using BaseProjectAPI.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -37,5 +39,20 @@ namespace BaseProjectAPI.Service.Items
         /// Expression to validate if Item is enabled
         /// </summary>
         public static Expression<Func<Item, bool>> IsEnabledExpression { get; } = item => item.IsEnabled;
+
+        public static string GetStockStatus(int quantity)
+        {
+            StockStatus result;
+            if (quantity <= 0)
+                result = StockStatus.Empty;
+            else if (quantity > 0 && quantity <= 2)
+                result = StockStatus.Low;
+            else if (quantity > 2 && quantity <= 5)
+                result = StockStatus.Medium;
+            else
+                result = StockStatus.Good;
+            
+            return result.ToString();
+        }
     }
 }
