@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BaseProjectAPI.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Respawn;
 using Respawn.Postgres;
 using System.Net.Http;
 using Xunit;
@@ -10,13 +13,13 @@ namespace BaseProject.Test
         /// <summary>
         /// Uses https://github.com/sandord/Respawn.Postgres to clean up database after integration test
         /// </summary>
-        private readonly PostgresCheckpoint _checkpointPostgreSQL = new PostgresCheckpoint
-        {
-            AutoCreateExtensions = true,
-            SchemasToInclude = new[] {
-            "public"
-            }
-        };
+        //private readonly PostgresCheckpoint _checkpointPostgreSQL = new PostgresCheckpoint
+        //{
+        //    AutoCreateExtensions = true,
+        //    SchemasToInclude = new[] {
+        //        "public"
+        //    }
+        //};
 
         /// <summary>
         /// Custom startup
@@ -28,6 +31,8 @@ namespace BaseProject.Test
         /// </summary>
         protected readonly HttpClient _client;
 
+        BaseDataContext _context;
+        
         /// <summary>
         /// Initializes all common services
         /// </summary>
@@ -37,8 +42,8 @@ namespace BaseProject.Test
             _factory = fixture;
             _client = _factory.CreateClient();
 
-            var str = _factory.Configuration.GetConnectionString("DefaultConnection");
-            _checkpointPostgreSQL.Reset(str);
+            //var str = _factory.Configuration.GetConnectionString("DefaultConnection");
+            //_checkpointPostgreSQL.Reset(str);
         }
     }
 }

@@ -15,7 +15,6 @@ namespace BaseProjectAPI.Persistence.Seeds
         public static void Seed(this ModelBuilder modelBuilder)
         {
             Faker<Item> items = SeedItems();
-
             modelBuilder.Entity<Item>().HasData(items.Generate(10));
         }
 
@@ -23,7 +22,7 @@ namespace BaseProjectAPI.Persistence.Seeds
         /// Fake items
         /// </summary>
         /// <returns><see cref="Item"/></returns>
-        private static Faker<Item> SeedItems()
+        public static Faker<Item> SeedItems()
         {
             var ids = 1;
             return new Faker<Item>()

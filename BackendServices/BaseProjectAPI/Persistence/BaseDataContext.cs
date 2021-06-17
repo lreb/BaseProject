@@ -19,6 +19,7 @@ namespace BaseProjectAPI.Persistence
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //TODO: identify seeds fake vs system seeds
             modelBuilder.Seed();
         }
     }

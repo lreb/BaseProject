@@ -15,3 +15,9 @@ https://fluentassertions.com
 https://fluentassertions.com/introduction
 https://github.com/jbogard/Respawn
 https://github.com/sandord/Respawn.Postgres
+
+
+https://timdeschryver.dev/blog/how-to-test-your-csharp-web-api
+
+https://jimmybogard.com/how-respawn-works/
+https://www.codeproject.com/Articles/5250190/Integration-Tests-in-ASP-NET-Core-A-DBContext

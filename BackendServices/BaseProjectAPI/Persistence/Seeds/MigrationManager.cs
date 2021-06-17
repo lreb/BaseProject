@@ -20,19 +20,27 @@ namespace BaseProjectAPI.Persistence.Seeds
         {
             using (var scope = host.Services.CreateScope())
             {
-                using (var appContext = scope.ServiceProvider.GetRequiredService<BaseDataContext>())
-                {
-                    try
-                    {
-                        appContext.Database.Migrate();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new BaseException("Cannot apply pending migrations",ex);
-                    }
-                }
+                ApplyMigrations(scope);
             }
             return host;
+        }
+
+        /// <summary>
+        /// Retrieve app context from <see cref="IServiceProvider"/> to apply migrations
+        /// </summary>
+        /// <param name="scope"></param>
+        public static void ApplyMigrations(IServiceScope scope)
+        {
+            using var appContext = scope.ServiceProvider.GetRequiredService<BaseDataContext>();
+
+            try
+            {
+                appContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                throw new BaseException("Cannot apply pending migrations", ex);
+            }
         }
     }
 }

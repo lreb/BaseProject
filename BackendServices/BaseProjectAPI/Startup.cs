@@ -65,7 +65,7 @@ namespace BaseProjectAPI
             services.AddMediatR(Assembly.GetExecutingAssembly());
             #endregion
 
-            #region automapper
+            #region Auto Mapper
             services.AddAutoMapper(typeof(Startup));
             #endregion
         }

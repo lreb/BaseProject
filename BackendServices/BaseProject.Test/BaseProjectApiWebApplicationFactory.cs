@@ -1,9 +1,16 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using BaseProjectAPI.Persistence;
+using BaseProjectAPI.Persistence.Seeds;
+using BaseProjectAPI.Service.Items;
+using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Respawn.Postgres;
 using System.IO;
+using System.Reflection;
 
 namespace BaseProject.Test
 {
@@ -12,6 +19,17 @@ namespace BaseProject.Test
     /// </summary>
     public class BaseProjectApiWebApplicationFactory : WebApplicationFactory<BaseProjectAPI.Startup>
     {
+        /// <summary>
+        /// Uses https://github.com/sandord/Respawn.Postgres to clean up database after integration test
+        /// </summary>
+        private readonly PostgresCheckpoint _checkpointPostgreSQL = new PostgresCheckpoint
+        {
+            AutoCreateExtensions = true,
+            SchemasToInclude = new[] {
+                "public"
+            }
+        };
+
         public IConfiguration Configuration { get; private set; }
 
         /// <summary>
@@ -28,14 +46,37 @@ namespace BaseProject.Test
                     .AddJsonFile("integrationsettings.json")
                     .Build();
 
-                config.AddConfiguration(Configuration);
+                config.AddConfiguration(Configuration);                
             });
 
             // will be called after the `ConfigureServices` from the Startup
             builder.ConfigureTestServices(services =>
             {
                 services.AddTransient<IWeatherForecastConfigService, WeatherForecastConfigStub>();
+
+                services.AddScoped<IItemsService, ItemsService>();
+                services.AddMediatR(Assembly.GetExecutingAssembly());
+
+                // Add ApplicationDbContext using an in-memory database for testing. Be sure to create first the DB
+                services.AddDbContext<BaseDataContext>(c => {
+                    c.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
+                });
+
+                // Build the service provider.
+                var serviceProvider = services.BuildServiceProvider();
+
+                // Create a scope to obtain a reference to the database
+                // context (ApplicationDbContext).
+                using var scope = serviceProvider.CreateScope();
+
+                MigrationManager.ApplyMigrations(scope);
+
+
+                //TODO: RESPAWN doesn't clean the db after testing
+                _checkpointPostgreSQL.Reset(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+
         }
     }
 
