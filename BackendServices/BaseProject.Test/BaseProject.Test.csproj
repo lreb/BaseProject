@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions.AspNetCore.Mvc" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Respawn.Postgres" Version="1.0.15" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,11 +25,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EndToEndTest\" />
+    <ProjectReference Include="..\BaseProjectAPI\BaseProjectAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BaseProjectAPI\BaseProjectAPI.csproj" />
+    <None Update="integrationsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

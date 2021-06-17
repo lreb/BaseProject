@@ -11,6 +11,7 @@ Get-Help about_EntityFrameworkCore
 
 
 Add-Migration Init -o .\Persistence\Migrations
+Add-Migration Initw -p BaseProjectAPI -c BaseDataContext -o .\Persistence\Migrations
 Update-Database
 
 
