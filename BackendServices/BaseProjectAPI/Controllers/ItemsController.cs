@@ -47,36 +47,27 @@ namespace BaseProjectAPI.Controllers
             return Ok(item);
         }
 
-        //// PUT: api/Items/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutItem(long id, Item item)
-        //{
-        //    if (id != item.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/Items/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutItem(long id, UpdateItemCommand item)
+        {
+            if (id != item.Id)
+            {
+                return BadRequest();
+            }
 
-        //    _context.Entry(item).State = EntityState.Modified;
+            try
+            {
+                var itemUpdated = await _mediator.Send(item);
+            }
+            catch (Exception ex)
+            {
+                throw new BaseException($"Cannot update {nameof(Item)}", ex);
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ItemExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         /// <summary>
         /// Create anew item
@@ -84,20 +75,20 @@ namespace BaseProjectAPI.Controllers
         /// <param name="item"><see cref="CreateItemCommand"/></param>
         /// <returns>Redirection to retrieve item created</returns>
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(CreateItemCommand item)
+        public async Task<IActionResult> PostItem(CreateItemCommand item)
         {
             try
             {
-                var c = await _mediator.Send(item);
+                var itemCreated = await _mediator.Send(item);
                 // TODO: use Item or ItemViewModel ????
-                return RedirectToAction(nameof(GetItem), new { Id = c.Id});
+                return RedirectToAction(nameof(GetItem), new { Id = itemCreated.Id });
                 // return CreatedAtAction("GetItem", new { id = c.Id }, c);
             }
             catch (Exception ex)
             {
 
-                throw new BaseException($"Cannot save {nameof(Item)}",ex);
-            }            
+                throw new BaseException($"Cannot save {nameof(Item)}", ex);
+            }
         }
 
         //// DELETE: api/Items/5

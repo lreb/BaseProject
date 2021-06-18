@@ -12,6 +12,8 @@ namespace BaseProjectAPI.Domain.MappingProfiles
             CreateMap<Item, ItemViewModel>();
 
             CreateMap<CreateItemCommand, Item>();
+
+            CreateMap<UpdateItemCommand, Item>();
         }
     }
 }

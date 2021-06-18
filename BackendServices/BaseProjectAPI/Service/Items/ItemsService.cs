@@ -33,7 +33,7 @@ namespace BaseProjectAPI.Service.Items
 
         public async Task<Item> GetItemById(int id)
         {
-            return await _context.Items
+            return await _context.Items.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

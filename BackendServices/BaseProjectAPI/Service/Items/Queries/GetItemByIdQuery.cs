@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using BaseProjectAPI.Domain.Models;
 using BaseProjectAPI.Domain.ViewModels;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,8 +40,8 @@ namespace BaseProjectAPI.Service.Items.Queries
             {
                 var item = await _ItemService.GetItemById(query.Id);
                 var itemViewModel = _mapper.Map<ItemViewModel>(item);
-                
-                if(itemViewModel is not null)
+
+                if (itemViewModel is not null)
                     itemViewModel.StockStatus = ItemFilters.GetStockStatus(item.Quantity);
 
                 return itemViewModel;

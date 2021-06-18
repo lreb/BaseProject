@@ -1,10 +1,6 @@
 ﻿using BaseProjectAPI.Service.Items.Commands;
 using BaseProjectAPI.Service.Items.Queries;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Service.Items.Validations
 {
