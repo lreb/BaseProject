@@ -47,8 +47,12 @@ namespace BaseProjectAPI.Controllers
             return Ok(item);
         }
 
-        // PUT: api/Items/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Updates an item
+        /// </summary>
+        /// <param name="id">item id</param>
+        /// <param name="item">item data to update</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(long id, UpdateItemCommand item)
         {
@@ -91,25 +95,24 @@ namespace BaseProjectAPI.Controllers
             }
         }
 
-        //// DELETE: api/Items/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteItem(long id)
-        //{
-        //    var item = await _context.Items.FindAsync(id);
-        //    if (item == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Items.Remove(item);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool ItemExists(long id)
-        //{
-        //    return _context.Items.Any(e => e.Id == id);
-        //}
+        /// <summary>
+        /// Delete an item
+        /// </summary>
+        /// <param name="id">item id to delete</param>
+        /// <returns><see cref="NoContentResult"/></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            try
+            {
+                var itemDeleted = await _mediator.Send(new DeleteItemCommand() { Id = id });
+            }
+            catch (Exception ex)
+            {
+                throw new BaseException($"Cannot delete {nameof(Item)}", ex);
+            }
+            
+            return NoContent();
+        }
     }
 }
