@@ -4,7 +4,7 @@ using Xunit;
 
 namespace BaseProject.Test.UnitTest
 {
-
+    [Trait("Category", "UnitTest")]
     public class ItemUnitTest
     {
         [Theory]

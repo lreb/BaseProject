@@ -1,6 +1,7 @@
 using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
 using BaseProjectAPI.Service.Items;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,11 +36,20 @@ namespace BaseProjectAPI
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BaseDataContext>(c => {
+            services.AddDbContext<BaseDataContext>(c =>
+            {
                 c.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                // register FluenValidator
+                .AddFluentValidation(r =>
+                {
+                    r.RegisterValidatorsFromAssemblyContaining<Startup>();
+                    // It is possible to use both Fluent Validation and Data Annotation at a time. Let’s only support Fluent Validation for now.
+                    //r.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    r.DisableDataAnnotationsValidation = true;
+                });
 
             #region Swagger service
             // enable swagger service
@@ -60,7 +70,7 @@ namespace BaseProjectAPI
                 .AddInMemoryStorage();
             #endregion
 
-            #region DI
+            #region DI - Register the services and repositories
             services.AddScoped<IItemsService, ItemsService>();
             services.AddMediatR(Assembly.GetExecutingAssembly());
             #endregion
@@ -124,6 +134,6 @@ namespace BaseProjectAPI
             });
         }
 
-        
+
     }
 }

@@ -2,6 +2,7 @@
 using BaseProjectAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Service.Items
@@ -16,12 +17,13 @@ namespace BaseProjectAPI.Service.Items
             _context = context;
         }
 
-        public async Task<IEnumerable<Item>> GetItemsList()
+        public async Task<IEnumerable<Item>> GetItemsList(CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             return await _context.Items
                 .EnabledItems()
                 .SpecificYearsAgo(5)
-                .ToListAsync();
+                .ToListAsync(token);
 
             // just an example how to call Expression Func
             // bool d = false;
@@ -31,10 +33,10 @@ namespace BaseProjectAPI.Service.Items
             // }
         }
 
-        public async Task<Item> GetItemById(int id)
+        public async Task<Item> GetItemById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Items
-                .FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Items.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
         public async Task<Item> CreateItem(Item Item)

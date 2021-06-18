@@ -6,7 +6,7 @@ namespace BaseProjectAPI.Persistence
 {
     public class BaseDataContext : DbContext
     {
-        public BaseDataContext(DbContextOptions<BaseDataContext> options) : base (options)
+        public BaseDataContext(DbContextOptions<BaseDataContext> options) : base(options)
         {
 
         }

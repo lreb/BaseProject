@@ -31,13 +31,13 @@ namespace BaseProjectAPI
                     .Build()
                     .MigrateDatabase()
                     .Run();
-                
+
             }
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Application start-up failed");
             }
-            finally 
+            finally
             {
                 Log.CloseAndFlush();
             }

@@ -3,7 +3,8 @@ using Xunit;
 
 namespace BaseProject.Test
 {
-    public class UnitTest1
+    [Trait("Category", "Demo")]
+    public class UnitTestDemo
     {
         [Fact]
         public void Test1()
