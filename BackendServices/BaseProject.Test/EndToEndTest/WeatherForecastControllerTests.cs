@@ -21,6 +21,8 @@ namespace BaseProject.Test.EndToEndTest
             _client = fixture.CreateClient();
         }
 
+        // TODO: categorize kind of tests
+
         [Fact]
         public async Task Get_Should_Retrieve_Forecast()
         {

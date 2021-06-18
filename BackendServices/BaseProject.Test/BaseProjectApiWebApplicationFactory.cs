@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
+using Respawn;
 using Respawn.Postgres;
 using System.IO;
 using System.Reflection;
@@ -22,13 +24,13 @@ namespace BaseProject.Test
         /// <summary>
         /// Uses https://github.com/sandord/Respawn.Postgres to clean up database after integration test
         /// </summary>
-        private readonly PostgresCheckpoint _checkpointPostgreSQL = new PostgresCheckpoint
-        {
-            AutoCreateExtensions = true,
-            SchemasToInclude = new[] {
-                "public"
-            }
-        };
+        //private readonly PostgresCheckpoint _checkpointPostgreSQL = new PostgresCheckpoint
+        //{
+        //    AutoCreateExtensions = true,
+        //    SchemasToInclude = new[] {
+        //        "public"
+        //    }
+        //};
 
         public IConfiguration Configuration { get; private set; }
 
@@ -62,6 +64,23 @@ namespace BaseProject.Test
                     c.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
                 });
 
+                using (var conn = new NpgsqlConnection(Configuration.GetConnectionString("DefaultConnection")))
+                {
+                    conn.Open();
+
+                    var checkpoint = new PostgresCheckpoint
+                    {
+                        SchemasToInclude = new[]
+                        {
+                            "public"
+                        },
+                        //DbAdapter = DbAdapter.Postgres
+                    };
+
+                    checkpoint.Reset(conn.ToString());
+                }
+
+
                 // Build the service provider.
                 var serviceProvider = services.BuildServiceProvider();
 
@@ -73,7 +92,7 @@ namespace BaseProject.Test
 
 
                 //TODO: RESPAWN doesn't clean the db after testing
-                _checkpointPostgreSQL.Reset(Configuration.GetConnectionString("DefaultConnection"));
+                //_checkpointPostgreSQL.Reset(Configuration.GetConnectionString("DefaultConnection"));
             });
 
 
