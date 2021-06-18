@@ -39,7 +39,7 @@ namespace BaseProjectAPI.Service.Items.Commands
 
             public async Task<int> Handle(UpdateItemCommand command, CancellationToken cancellationToken)
             {
-                var itemOnDb = await _ItemService.GetItemById(command.Id);
+                var itemOnDb = await _ItemService.GetItemById(command.Id, cancellationToken);
                 if (itemOnDb == null)
                     return default;
 

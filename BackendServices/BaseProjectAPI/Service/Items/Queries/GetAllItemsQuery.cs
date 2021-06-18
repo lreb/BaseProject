@@ -46,7 +46,7 @@ namespace BaseProjectAPI.Service.Items.Queries
             /// <returns></returns>
             public async Task<IEnumerable<ItemViewModel>> Handle(GetAllItemsQuery query, CancellationToken cancellationToken)
             {
-                var items = await _ItemService.GetItemsList();
+                var items = await _ItemService.GetItemsList(cancellationToken);
                 var itemsViewModel = _mapper.Map<IEnumerable<ItemViewModel>>(items);
                 foreach (var item in itemsViewModel)
                 {

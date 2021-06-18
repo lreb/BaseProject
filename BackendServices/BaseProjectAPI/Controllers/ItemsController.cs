@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Controllers
@@ -27,7 +28,7 @@ namespace BaseProjectAPI.Controllers
         /// </summary>
         /// <returns><see cref="IEnumerable"/> of <see cref="ItemViewModel"/></returns>
         [HttpGet]
-        public async Task<IActionResult> GetItems() => Ok(await _mediator.Send(new GetAllItemsQuery()));
+        public async Task<IActionResult> GetItems(CancellationToken cancellationToken) => Ok(await _mediator.Send(new GetAllItemsQuery(), cancellationToken));
 
         /// <summary>
         /// Retrieves item by id
@@ -35,9 +36,9 @@ namespace BaseProjectAPI.Controllers
         /// <param name="id"><see cref="int"/>item id</param>
         /// <returns><see cref="ItemViewModel"/></returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetItem(int id)
+        public async Task<IActionResult> GetItem(int id, CancellationToken cancellationToken)
         {
-            var item = await _mediator.Send(new GetItemByIdQuery() { Id = id });
+            var item = await _mediator.Send(new GetItemByIdQuery() { Id = id }, cancellationToken);
 
             if (item == null)
             {

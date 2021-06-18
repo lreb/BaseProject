@@ -8,6 +8,12 @@ This layer implement all services, data retrieves from database, and expose the 
 Used patterns in this project, to give a context about you can find here
 
 #### Mediator
+- Define an object that encapsulates how a set of objects interact. Mediator promotes loose coupling by keeping objects from referring to each other explicitly, and it lets you vary their interaction independently.
+- Design an intermediary to decouple many peers.
+- Promote the many-to-many relationships between interacting peers to "full object status".
+
+A handler can perform complex operations with several services, in this example we use just one entity but can be more useful for complex scenarios
+
 [Official Documentation](https://sourcemaking.com/design_patterns/mediator)
 [Official Repository](https://github.com/jbogard/MediatR)
 

@@ -5,6 +5,12 @@ using Xunit;
 
 namespace BaseProject.Test.EndToEndTest
 {
+    //[CollectionDefinition("Xyz Test Collection")]
+    //public class Collection1 { }
+
+    //[Collection("Xzy Test Collection")]
+    //[TraitAttribute("a","b")]
+    [Trait("Category", "E2e")]
     public class ItemsControllerTest : IntegrationTestWrapper
     {
         /// <summary>
@@ -14,6 +20,9 @@ namespace BaseProject.Test.EndToEndTest
         public ItemsControllerTest(BaseProjectApiWebApplicationFactory fixture)
         : base(fixture) { }
 
+        
+
+        
         [Fact]
         public async Task Get_Should_Retrieve_Items()
         {

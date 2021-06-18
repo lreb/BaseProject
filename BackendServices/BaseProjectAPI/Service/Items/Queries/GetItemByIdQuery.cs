@@ -38,7 +38,7 @@ namespace BaseProjectAPI.Service.Items.Queries
 
             public async Task<ItemViewModel> Handle(GetItemByIdQuery query, CancellationToken cancellationToken)
             {
-                var item = await _ItemService.GetItemById(query.Id);
+                var item = await _ItemService.GetItemById(query.Id, cancellationToken);
                 var itemViewModel = _mapper.Map<ItemViewModel>(item);
 
                 if (itemViewModel is not null)

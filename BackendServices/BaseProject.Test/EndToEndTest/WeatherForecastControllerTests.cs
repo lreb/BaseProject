@@ -9,6 +9,7 @@ using Xunit;
 
 namespace BaseProject.Test.EndToEndTest
 {
+    [Trait("Category", "E2e")]
     /// <summary>
     /// test with basic factory
     /// </summary>
@@ -34,6 +35,8 @@ namespace BaseProject.Test.EndToEndTest
         }
     }
 
+
+    [Trait("Category", "E2e")]
     /// <summary>
     /// test with custom factory
     /// </summary>
