@@ -21,3 +21,11 @@ https://timdeschryver.dev/blog/how-to-test-your-csharp-web-api
 
 
 https://www.codeproject.com/Articles/5250190/Integration-Tests-in-ASP-NET-Core-A-DBContext
+
+
+
+## Helpers
+[Order Attributes](https://hamidmosalla.com/2018/08/16/xunit-control-the-test-execution-order/)
+[Order Attributes Repository](https://github.com/xunit/samples.xunit/tree/main/TestOrderExamples/TestCaseOrdering)
+[Official solution to priority order](https://github.com/asherber/Xunit.Priority)
+[Xunit.Priority](https://www.nuget.org/packages/Xunit.Priority/)
