@@ -12,7 +12,8 @@ Get-Help about_EntityFrameworkCore
 
 Add-Migration Init -o .\Persistence\Migrations
 Add-Migration Initw -p BaseProjectAPI -c BaseDataContext -o .\Persistence\Migrations
-Update-Database
 
+Update-Database
+Update-Database -p BaseProjectAPI -Context BaseDataContext 
 
 https://stackoverflow.com/questions/57066856/command-dotnet-ef-not-found-in-net-core-3

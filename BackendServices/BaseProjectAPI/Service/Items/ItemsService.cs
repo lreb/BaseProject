@@ -9,7 +9,6 @@ namespace BaseProjectAPI.Service.Items
 {
     public class ItemsService : IItemsService
     {
-
         private readonly BaseDataContext _context;
 
         public ItemsService(BaseDataContext context)

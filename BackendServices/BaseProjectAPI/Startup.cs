@@ -1,6 +1,7 @@
 using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
 using BaseProjectAPI.Service.Items;
+using BaseProjectAPI.Service.Users;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -71,7 +72,10 @@ namespace BaseProjectAPI
             #endregion
 
             #region DI - Register the services and repositories
+            // register all injections
             services.AddScoped<IItemsService, ItemsService>();
+            services.AddScoped<IUsersService, UsersService>();
+            // register all mediatr handlers
             services.AddMediatR(Assembly.GetExecutingAssembly());
             #endregion
 
