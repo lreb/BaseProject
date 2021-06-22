@@ -32,11 +32,14 @@ namespace BaseProjectAPI.Service.Users
         /// <returns>User data</returns>
         public async Task<User> Authenticate(string email, string password, CancellationToken cancellationToken)
         {
-            return await _context.Users.Where(a => a.Email.Equals(email)).AsNoTracking()
+            return await _context.Users.Where(a => a.Email.Equals(email) && a.IsEnabled).AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);
         }
     }
 
+    /// <summary>
+    /// Auxiliary functionality to provide authentication
+    /// </summary>
     public class UsersSecurityService : IUsersSecurityService
     {
         /// <summary>

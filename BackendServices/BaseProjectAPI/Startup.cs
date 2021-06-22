@@ -5,7 +5,6 @@ using BaseProjectAPI.Service.Items;
 using BaseProjectAPI.Service.Users;
 using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Reflection;
-using System.Text;
 
 namespace BaseProjectAPI
 {
@@ -59,7 +54,7 @@ namespace BaseProjectAPI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectionString = _configuration.GetSection($"{nameof(ConnectionStrings)}").Get<ConnectionStrings>();
+            _connectionString = _configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>();
         }
 
         /// <summary>
@@ -136,8 +131,8 @@ namespace BaseProjectAPI
             if (env.IsLocal())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
                 app.EnableSwaggerPipeline(_configuration);
             }
             else if (env.IsDevelopment())
