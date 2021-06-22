@@ -1,9 +1,11 @@
+using BaseProjectAPI.Domain.Helpers;
 using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
 using BaseProjectAPI.Service.Items;
 using BaseProjectAPI.Service.Users;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Reflection;
+using System.Text;
 
 namespace BaseProjectAPI
 {
@@ -75,12 +80,43 @@ namespace BaseProjectAPI
             // register all injections
             services.AddScoped<IItemsService, ItemsService>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IUsersSecurityService, UsersSecurityService>();
+            
             // register all mediatr handlers
             services.AddMediatR(Assembly.GetExecutingAssembly());
             #endregion
 
             #region Auto Mapper
             services.AddAutoMapper(typeof(Startup));
+            #endregion
+
+            #region jwt
+            // configure strongly typed settings objects
+            var appSettingsSection = _configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
             #endregion
         }
 
@@ -120,6 +156,7 @@ namespace BaseProjectAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

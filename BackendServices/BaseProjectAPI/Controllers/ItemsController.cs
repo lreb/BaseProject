@@ -4,6 +4,7 @@ using BaseProjectAPI.Domain.ViewModels;
 using BaseProjectAPI.Service.Items.Commands;
 using BaseProjectAPI.Service.Items.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace BaseProjectAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemsController : ControllerBase
