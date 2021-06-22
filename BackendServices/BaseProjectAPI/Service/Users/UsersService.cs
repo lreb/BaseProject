@@ -8,6 +8,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,10 +48,13 @@ namespace BaseProjectAPI.Service.Users
         /// </summary>
         private readonly JwtOptions _jwtOptions;
 
+        private readonly BaseDataContext _context;
+
         public UsersSecurityService(
-            IOptionsSnapshot<JwtOptions> jwtOptions)
+            IOptionsSnapshot<JwtOptions> jwtOptions, BaseDataContext context)
         {
             _jwtOptions = jwtOptions.Value;
+            _context = context;
         }
 
         /// <summary>
@@ -74,6 +78,5 @@ namespace BaseProjectAPI.Service.Users
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
     }
 }
