@@ -1,6 +1,18 @@
 # Base Project
 This project give us a common base for fastest staring on a new project, and tries to avoid spend a lot of time setup all basic plugging and usual integrations
 
+## Setup
+
+### Windows
+
+- Install NetCore SDK
+- Configure local variable with below name 'BaseProjectDefaultConnectionString' this will store the connection string to your PostgreSQL database
+- Update your database on base the migrations
+- Enjoy!!!!
+
+### Production environments
+you can leverage several cloud services like [Key Vault on Azure](https://azure.microsoft.com/en-us/services/key-vault/) or [Secret Manager on AWS](https://aws.amazon.com/secrets-manager/) to store sensitive data like connection strings.
+
 ## API
 This layer implement all services, data retrieves from database, and expose the endpoints to be consumed by the clients
 

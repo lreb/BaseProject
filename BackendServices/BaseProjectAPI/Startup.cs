@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Reflection;
 
 namespace BaseProjectAPI
@@ -26,7 +27,7 @@ namespace BaseProjectAPI
         /// <summary>
         /// The ConnectionStrings Options snapshot
         /// </summary>
-        private ConnectionStrings _connectionString;
+        private string _connectionString;
 
         /// <summary>
         /// Constructor where we inject the configuration settings
@@ -54,7 +55,7 @@ namespace BaseProjectAPI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectionString = _configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>();
+            _connectionString = Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString"); // _configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>();
         }
 
         /// <summary>
@@ -69,7 +70,6 @@ namespace BaseProjectAPI
                 {
                     r.RegisterValidatorsFromAssemblyContaining<Startup>();
                     // It is possible to use both Fluent Validation and Data Annotation at a time. Let’s only support Fluent Validation for now.
-                    //r.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     r.DisableDataAnnotationsValidation = true;
                 });
 
@@ -77,7 +77,7 @@ namespace BaseProjectAPI
 
             services.AddDbContext<BaseDataContext>(c =>
             {
-                c.UseNpgsql(_connectionString.DefaultConnection);
+                c.UseNpgsql(_connectionString);
             });
 
             #region Swagger service
@@ -131,8 +131,6 @@ namespace BaseProjectAPI
             if (env.IsLocal())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
                 app.EnableSwaggerPipeline(_configuration);
             }
             else if (env.IsDevelopment())

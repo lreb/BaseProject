@@ -5,6 +5,7 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>$(NoWarn);1591</NoWarn>
 	<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+	<UserSecretsId>596ac5f6-1cb3-4dfe-a389-285d82a39bfd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
