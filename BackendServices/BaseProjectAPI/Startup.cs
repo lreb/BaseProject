@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Reflection;
@@ -28,12 +29,37 @@ namespace BaseProjectAPI
         public IConfiguration _configuration { get; }
 
         /// <summary>
+        /// The ConnectionStrings Options snapshot
+        /// </summary>
+        private ConnectionStrings _connectionString;
+
+        /// <summary>
         /// Constructor where we inject the configuration settings
         /// </summary>
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
+            
+        }
+
+        /// <summary>
+        /// Load configuration settings - Options Pattern/>
+        /// </summary>
+        /// <param name="services">app services <see cref="IServiceCollection"/></param>
+        private void ConfigureConfigSettings(IServiceCollection services)
+        {
+            services
+               .AddOptions()
+               .Configure<JwtOptions>(_configuration.GetSection($"{nameof(AppSettings)}:{nameof(JwtOptions)}"));
+
+            services
+               .AddOptions()
+               .Configure<JwtOptions>(_configuration.GetSection(nameof(ConnectionStrings)));
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _connectionString = _configuration.GetSection($"{nameof(ConnectionStrings)}").Get<ConnectionStrings>();
         }
 
         /// <summary>
@@ -42,11 +68,6 @@ namespace BaseProjectAPI
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BaseDataContext>(c =>
-            {
-                c.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
-            });
-
             services.AddControllers()
                 // register FluenValidator
                 .AddFluentValidation(r =>
@@ -56,6 +77,13 @@ namespace BaseProjectAPI
                     //r.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     r.DisableDataAnnotationsValidation = true;
                 });
+
+            ConfigureConfigSettings(services);
+
+            services.AddDbContext<BaseDataContext>(c =>
+            {
+                c.UseNpgsql(_connectionString.DefaultConnection);
+            });
 
             #region Swagger service
             // enable swagger service
@@ -90,33 +118,8 @@ namespace BaseProjectAPI
             services.AddAutoMapper(typeof(Startup));
             #endregion
 
-            #region jwt
-            // configure strongly typed settings objects
-            var appSettingsSection = _configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+            #region Enable JWT service
+            services.ConfigureJwtService(_configuration);
             #endregion
         }
 

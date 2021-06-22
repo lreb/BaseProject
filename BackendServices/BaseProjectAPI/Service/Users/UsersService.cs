@@ -23,6 +23,13 @@ namespace BaseProjectAPI.Service.Users
             _context = context;
         }
 
+        /// <summary>
+        /// Validates if the user exist
+        /// </summary>
+        /// <param name="email">email password</param>
+        /// <param name="password">password</param>
+        /// <param name="cancellationToken">cancellation token for the call</param>
+        /// <returns>User data</returns>
         public async Task<User> Authenticate(string email, string password, CancellationToken cancellationToken)
         {
             return await _context.Users.Where(a => a.Email.Equals(email)).AsNoTracking()
@@ -32,18 +39,26 @@ namespace BaseProjectAPI.Service.Users
 
     public class UsersSecurityService : IUsersSecurityService
     {
-        private readonly AppSettings _appSettings;
+        /// <summary>
+        /// JWT options binding
+        /// </summary>
+        private readonly JwtOptions _jwtOptions;
 
         public UsersSecurityService(
-            IOptions<AppSettings> appSettings)
+            IOptionsSnapshot<JwtOptions> jwtOptions)
         {
-            _appSettings = appSettings.Value;
+            _jwtOptions = jwtOptions.Value;
         }
 
+        /// <summary>
+        /// Generates a new JWT
+        /// </summary>
+        /// <param name="user">user data<see cref="User"/></param>
+        /// <returns>JWT as string</returns>
         string IUsersSecurityService.GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
