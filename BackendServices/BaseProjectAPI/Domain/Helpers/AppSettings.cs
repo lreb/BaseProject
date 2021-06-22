@@ -26,5 +26,11 @@
         /// Expiration in hours
         /// </summary>
         public int ExpirationInHours { get; set; }
+        /// <summary>
+        /// Expiration in hours
+        /// </summary>
+        public int ExpirationInMinutes { get; set; }
+
+        
     }
 }
