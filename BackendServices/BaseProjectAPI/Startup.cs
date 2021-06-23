@@ -1,6 +1,8 @@
+using BaseProjectAPI.Domain.Helpers;
 using BaseProjectAPI.Infraestructure.Extensions;
 using BaseProjectAPI.Persistence;
 using BaseProjectAPI.Service.Items;
+using BaseProjectAPI.Service.Users;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Reflection;
 
 namespace BaseProjectAPI
@@ -22,12 +25,37 @@ namespace BaseProjectAPI
         public IConfiguration _configuration { get; }
 
         /// <summary>
+        /// The ConnectionStrings Options snapshot
+        /// </summary>
+        private string _connectionString;
+
+        /// <summary>
         /// Constructor where we inject the configuration settings
         /// </summary>
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
+            
+        }
+
+        /// <summary>
+        /// Load configuration settings - Options Pattern/>
+        /// </summary>
+        /// <param name="services">app services <see cref="IServiceCollection"/></param>
+        private void ConfigureConfigSettings(IServiceCollection services)
+        {
+            services
+               .AddOptions()
+               .Configure<JwtOptions>(_configuration.GetSection($"{nameof(AppSettings)}:{nameof(JwtOptions)}"));
+
+            services
+               .AddOptions()
+               .Configure<JwtOptions>(_configuration.GetSection(nameof(ConnectionStrings)));
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _connectionString = Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString"); // _configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>();
         }
 
         /// <summary>
@@ -36,20 +64,21 @@ namespace BaseProjectAPI
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BaseDataContext>(c =>
-            {
-                c.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
-            });
-
             services.AddControllers()
                 // register FluenValidator
                 .AddFluentValidation(r =>
                 {
                     r.RegisterValidatorsFromAssemblyContaining<Startup>();
                     // It is possible to use both Fluent Validation and Data Annotation at a time. Let’s only support Fluent Validation for now.
-                    //r.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     r.DisableDataAnnotationsValidation = true;
                 });
+
+            ConfigureConfigSettings(services);
+
+            services.AddDbContext<BaseDataContext>(c =>
+            {
+                c.UseNpgsql(_connectionString);
+            });
 
             #region Swagger service
             // enable swagger service
@@ -71,12 +100,21 @@ namespace BaseProjectAPI
             #endregion
 
             #region DI - Register the services and repositories
+            // register all injections
             services.AddScoped<IItemsService, ItemsService>();
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IUsersSecurityService, UsersSecurityService>();
+            
+            // register all mediatr handlers
             services.AddMediatR(Assembly.GetExecutingAssembly());
             #endregion
 
             #region Auto Mapper
             services.AddAutoMapper(typeof(Startup));
+            #endregion
+
+            #region Enable JWT service
+            services.ConfigureJwtService(_configuration);
             #endregion
         }
 
@@ -93,8 +131,6 @@ namespace BaseProjectAPI
             if (env.IsLocal())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaseProjectAPI v1"));
                 app.EnableSwaggerPipeline(_configuration);
             }
             else if (env.IsDevelopment())
@@ -116,6 +152,7 @@ namespace BaseProjectAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
