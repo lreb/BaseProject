@@ -46,6 +46,16 @@ Generated documentation can be seen by launching index.html from generated cover
 
 [Source](https://medium.com/learnwithrahul/automated-documentation-for-your-typescript-angular-projects-35746aa0ad5e)
 
+### excecute documentation with http-server
+
+Install 
+`npm install --global http-server`
+
+then just run with
+`http-server`
+
+under documentation folder generated
+
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
