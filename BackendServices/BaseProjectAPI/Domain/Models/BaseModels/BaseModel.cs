@@ -2,10 +2,22 @@
 
 namespace BaseProjectAPI.Domain.Models.BaseModels
 {
-    public class BaseModel
+    /// <summary>
+    /// Basic common fields (IsEnabled, CreatedOn, DisabledOn)
+    /// </summary>
+    public class BaseModelLevel1
     {
         public bool IsEnabled { get; set; } = true;
         public DateTimeOffset CreatedOn { get; set; } = DateTime.UtcNow;
         public DateTimeOffset? DisabledOn { get; set; }
+    }
+
+    /// <summary>
+    /// Strict audit common field (CreatedBy, DisabledBy)
+    /// </summary>
+    public class BaseModelLeve2 : BaseModelLevel1
+    {
+        public User CreatedBy { get; set; }
+        public User DisabledBy { get; set; }
     }
 }

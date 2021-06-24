@@ -2,7 +2,7 @@
 
 namespace BaseProjectAPI.Domain.Models
 {
-    public class User: BaseModel
+    public class User: BaseModelLevel1
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

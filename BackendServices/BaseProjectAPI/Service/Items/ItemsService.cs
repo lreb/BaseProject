@@ -54,6 +54,11 @@ namespace BaseProjectAPI.Service.Items
         public async Task<int> DeleteItem(Item Item)
         {
             _context.Items.Remove(Item);
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            await transaction.CommitAsync();
+            await transaction.RollbackAsync();
+            
             return await _context.SaveChangesAsync();
         }
     }
