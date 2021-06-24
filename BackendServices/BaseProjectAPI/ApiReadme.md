@@ -76,3 +76,9 @@ This layer is on charge to perform several kind of tests to the base project
 
 [Nuget.org](https://www.nuget.org)
 
+## Tools
+
+### EF Core Power Tools
+[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ErikEJ.EFCorePowerTools#review-details)
+[Official Repository](https://github.com/ErikEJ/EFCorePowerTools)
+
