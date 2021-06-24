@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import '../styles/demo/TeslaClimate.css';
 
 const TeslaClimate = (props) => (
-    <div className="tesla-climate">
+	<div className="tesla-climate">
     <label
       className={`tesla-climate__item ${props.value ? 'tesla-climate__item--active' : '' }  ${!props.limit ? 'tesla-heat':''}`}
     >
@@ -17,12 +17,12 @@ const TeslaClimate = (props) => (
       />
     </label>
   </div>
-  );
+);
 
-  TeslaClimate.propTypes = {
-    value: PropTypes.bool,
-    limit: PropTypes.bool,
-    handleChangeClimate: PropTypes.func
-  }
+TeslaClimate.propTypes = {
+	value: PropTypes.bool,
+	limit: PropTypes.bool,
+	handleChangeClimate: PropTypes.func
+}
 
-  export default TeslaClimate;
+export default TeslaClimate;

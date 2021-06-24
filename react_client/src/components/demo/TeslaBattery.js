@@ -10,7 +10,7 @@ import TeslaWheels from './TeslaWheeels';
 
 class TeslaBattery extends React.Component {
 
- constructor(props){
+ 	constructor(props){
     super(props);
 
     this.calculateStats = this.calculateStats.bind(this);
@@ -21,140 +21,143 @@ class TeslaBattery extends React.Component {
     this.handleChangeWheels = this.handleChangeWheels.bind(this);
     this.statsUpdate = this.statsUpdate.bind(this);
 
-        this.state = {
-        carstats: [],
-        config: {
-            speed: 55,
-            temperature: 20,
-            climate: true,
-            wheels: 19
-            }
-        }
-    }
+		this.state = {
+		carstats: [],
+		config: {
+				speed: 55,
+				temperature: 20,
+				climate: true,
+				wheels: 19
+				}
+		}
+	}
 
-    calculateStats = (models, value) => {
-        const dataModels = getModelData();
-        return models.map(model => {
-          const { speed, temperature, climate, wheels } = value;
-          const miles = dataModels[model][wheels][climate ? 'on' : 'off'].speed[speed][temperature];
-          return {
-            model,
-            miles
-          };
-        });
-      }
+	calculateStats = (models, value) => {
+			const dataModels = getModelData();
+			return models.map(model => {
+				const { speed, temperature, climate, wheels } = value;
+				const miles = dataModels[model][wheels][climate ? 'on' : 'off'].speed[speed][temperature];
+				return {
+					model,
+					miles
+				};
+			});
+		}
 
-      statsUpdate() {
-        const carModels = ['60', '60D', '75', '75D', '90D', 'P100D'];
-        // Fetch model info from BatteryService and calculate then update state
-        this.setState({
-          carstats: this.calculateStats(carModels, this.state.config)
-        });
-      }
+	statsUpdate() {
+		const carModels = ['60', '60D', '75', '75D', '90D', 'P100D'];
+		// Fetch model info from BatteryService and calculate then update state
+		this.setState({
+			carstats: this.calculateStats(carModels, this.state.config)
+		});
+	}
 
-      componentDidMount() {
-        this.statsUpdate(); 
-      }
+	componentDidMount() {
+		this.statsUpdate();
+	}
 
-      updateCounterState(title, newValue) {
-        const config = { ...this.state.config };
-        // update config state with new value
-        title === 'Speed' ? config['speed'] = newValue : config['temperature'] = newValue;
-        // update our state
-        this.setState({ config });
-      }
-      increment(e, title) {
-        e.preventDefault();
-        let currentValue, maxValue, step;
-        const { speed, temperature } = this.props.counterDefaultVal;
-        if (title === 'Speed') {
-          currentValue = this.state.config.speed;
-          maxValue = speed.max;
-          step = speed.step;
-        } else {
-          currentValue = this.state.config.temperature;
-          maxValue = temperature.max;
-          step = temperature.step;
-        }
-        if (currentValue < maxValue) {
-          const newValue = currentValue + step;
-          this.updateCounterState(title, newValue);
-        }
-      }
-      decrement(e, title) {
-        e.preventDefault();
-        let currentValue, minValue, step;
-        const { speed, temperature } = this.props.counterDefaultVal;
-        if (title === 'Speed') {
-          currentValue = this.state.config.speed;
-          minValue = speed.min;
-          step = speed.step;
-        } else {
-          currentValue = this.state.config.temperature;
-          minValue = temperature.min;
-          step = temperature.step;
-        }
-        if (currentValue > minValue) {
-          const newValue = currentValue - step;
-          this.updateCounterState(title, newValue);
-        }
-      } 
+	updateCounterState(title, newValue) {
+		const config = { ...this.state.config };
+		// update config state with new value
+		title === 'Speed' ? config['speed'] = newValue : config['temperature'] = newValue;
+		// update our state
+		this.setState({ config });
+	}
 
-      // handle aircon & heating click event handler
-handleChangeClimate() {
-    const config = {...this.state.config};
-    config['climate'] = !this.state.config.climate;
-    this.setState({ config });
-  }
+	increment(e, title) {
+		e.preventDefault();
+		let currentValue, maxValue, step;
+		const { speed, temperature } = this.props.counterDefaultVal;
+		if (title === 'Speed') {
+			currentValue = this.state.config.speed;
+			maxValue = speed.max;
+			step = speed.step;
+		} else {
+			currentValue = this.state.config.temperature;
+			maxValue = temperature.max;
+			step = temperature.step;
+		}
+		if (currentValue < maxValue) {
+			const newValue = currentValue + step;
+			this.updateCounterState(title, newValue);
+		}
+	}
 
-  handleChangeWheels(size) {
-    const config = {...this.state.config};
-    config['wheels'] = size;
-    this.setState({ config });
-  }
+	decrement(e, title) {
+		e.preventDefault();
+		let currentValue, minValue, step;
+		const { speed, temperature } = this.props.counterDefaultVal;
+		if (title === 'Speed') {
+			currentValue = this.state.config.speed;
+			minValue = speed.min;
+			step = speed.step;
+		} else {
+			currentValue = this.state.config.temperature;
+			minValue = temperature.min;
+			step = temperature.step;
+		}
+		if (currentValue > minValue) {
+			const newValue = currentValue - step;
+			this.updateCounterState(title, newValue);
+		}
+	}
 
-  render() {
-    // ES6 Object destructuring Syntax,
-    // takes out required values and create references to them
-    const { config, carstats } = this.state;
-    console.log(config)
-    return (
-      <form className="tesla-battery">
-        <h1>Range Per Charge</h1>
-        <TeslaCar wheelsize={config.wheels}/>
-        <TeslaStats carstats={carstats}/>
+	// handle aircon & heating click event handler
+	handleChangeClimate() {
+		const config = {...this.state.config};
+		config['climate'] = !this.state.config.climate;
+		this.setState({ config });
+	}
 
-        <div className="tesla-controls cf">
-          <TeslaCounter
-            currentValue={this.state.config.speed}
-            initValues={this.props.counterDefaultVal.speed}
-            increment={this.increment}
-            decrement={this.decrement}
-          />
-          <div className="tesla-climate-container cf">
-            <TeslaCounter
-              currentValue={this.state.config.temperature}
-              initValues={this.props.counterDefaultVal.temperature}
-              increment={this.increment}
-              decrement={this.decrement}
-            />
-          </div>
-        </div>
+	handleChangeWheels(size) {
+		const config = {...this.state.config};
+		config['wheels'] = size;
+		this.setState({ config });
+	}
 
-        <TeslaClimate
-            value={this.state.config.climate}
-            limit={this.state.config.temperature > 10}
-            handleChangeClimate={this.handleChangeClimate}
-            />
+	render() {
+		// ES6 Object destructuring Syntax,
+		// takes out required values and create references to them
+		const { config, carstats } = this.state;
 
-<TeslaWheels
-  value={this.state.config.wheels}
-  handleChangeWheels={this.handleChangeWheels}
-/>
+		return (
+			<form className="tesla-battery">
+				<h1>Range Per Charge</h1>
+				<TeslaCar wheelsize={config.wheels}/>
+				<TeslaStats carstats={carstats}/>
 
-        <TeslaNotice />
-      </form>
-    );
-  }
+				<div className="tesla-controls cf">
+					<TeslaCounter
+						currentValue={this.state.config.speed}
+						initValues={this.props.counterDefaultVal.speed}
+						increment={this.increment}
+						decrement={this.decrement}
+					/>
+					<div className="tesla-climate-container cf">
+						<TeslaCounter
+							currentValue={this.state.config.temperature}
+							initValues={this.props.counterDefaultVal.temperature}
+							increment={this.increment}
+							decrement={this.decrement}
+						/>
+					</div>
+				</div>
+
+				<TeslaClimate
+						value={this.state.config.climate}
+						limit={this.state.config.temperature > 10}
+						handleChangeClimate={this.handleChangeClimate}
+						/>
+
+				<TeslaWheels
+					value={this.state.config.wheels}
+					handleChangeWheels={this.handleChangeWheels}
+				/>
+
+				<TeslaNotice />
+			</form>
+		);
+	}
 }
+
 export default TeslaBattery;

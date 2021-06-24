@@ -12,20 +12,20 @@ const TeslaCounter = (props) => (
           <span>{ props.initValues.unit }</span>
         </p>
         <div className="tesla-counter__controls">
-          <button 
-            onClick={(e) => props.increment(e, props.initValues.title)} 
-            disabled={props.currentValue >= props.initValues.max} 
+          <button
+            onClick={(e) => props.increment(e, props.initValues.title)}
+            disabled={props.currentValue >= props.initValues.max}
           >
           </button>
-          <button 
-            onClick={(e) => props.decrement(e, props.initValues.title)} 
-            disabled={props.currentValue <= props.initValues.min} 
+          <button
+            onClick={(e) => props.decrement(e, props.initValues.title)}
+            disabled={props.currentValue <= props.initValues.min}
           >
           </button>
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 );
 
 TeslaCounter.propTypes = {

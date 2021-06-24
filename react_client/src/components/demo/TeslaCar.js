@@ -12,8 +12,7 @@ const TeslaCar = (props) => (
 );
 
 TeslaCar.propTypes = {
-//  wheelsize: PropTypes.func.isRequired
-wheelsize: PropTypes.number
+  wheelsize: PropTypes.number
 }
 
 TeslaCar.defaultProps = {

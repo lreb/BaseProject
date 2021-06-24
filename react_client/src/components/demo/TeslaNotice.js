@@ -15,4 +15,5 @@ const TeslaNotice = () => (
     </p>
   </div>
 )
+
 export default TeslaNotice;

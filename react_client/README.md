@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Demo App
+
+this includes a demo application thsnks to [educative.io](https://www.educative.io/courses/building-teslas-battery-range-calculator-with-react-and-redux/JYY6NypyPW9)
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -28,6 +32,18 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+#### serve build folder
+
+When build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
 
 ### `npm run eject`
 
