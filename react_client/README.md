@@ -129,6 +129,11 @@ Otherwise you can stick to class components or take a look into the library reco
 }
 ```
 
+### callbacks
+
+https://medium.com/@jasminegump/passing-data-between-a-parent-and-child-in-react-deea2ec8e654
+
+
 ## Plugins
 
 [simple-react-snippets](https://marketplace.visualstudio.com/items?itemName=burkeholland.simple-react-snippets)
