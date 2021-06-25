@@ -109,3 +109,26 @@ We suggest that you begin by typing:
   npm start
 
 Happy hacking!
+
+## tips
+ you should use functional components if you are writing a presentational component which doesn’t have its own state or needs to access a lifecycle hook. 
+
+```javascript
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+```
+
+Otherwise you can stick to class components or take a look into the library recompose which allows you to write functional components and enhance them with a state or lifecycle hooks with HOCs!
+
+```javascript
+ class Welcome extends React.Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+```
+
+## Plugins
+
+[simple-react-snippets](https://marketplace.visualstudio.com/items?itemName=burkeholland.simple-react-snippets)
