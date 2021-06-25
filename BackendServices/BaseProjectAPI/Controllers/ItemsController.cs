@@ -36,6 +36,7 @@ namespace BaseProjectAPI.Controllers
         /// Retrieves item by id
         /// </summary>
         /// <param name="id"><see cref="int"/>item id</param>
+        /// <param name="cancellationToken">client cancellation request</param>
         /// <returns><see cref="ItemViewModel"/></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetItem(int id, CancellationToken cancellationToken)

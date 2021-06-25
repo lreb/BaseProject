@@ -35,6 +35,12 @@ A handler can perform complex operations with several services, in this example 
 [Official Repository](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
 ### Healtcheck
+
+examples
+[UI interface](https://localhost:5001/healthchecks-ui#/healthchecks)
+[general health](https://localhost:5001/health)
+[detailed health](https://localhost:5001/health-details)
+
 [Official Documentation](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/monitor-app-health)
 
 https://www.c-sharpcorner.com/article/health-check-using-asp-net-core/
@@ -75,4 +81,10 @@ This layer is on charge to perform several kind of tests to the base project
 ##Source Packages
 
 [Nuget.org](https://www.nuget.org)
+
+## Tools
+
+### EF Core Power Tools
+[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ErikEJ.EFCorePowerTools#review-details)
+[Official Repository](https://github.com/ErikEJ/EFCorePowerTools)
 

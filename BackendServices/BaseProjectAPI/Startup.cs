@@ -55,7 +55,7 @@ namespace BaseProjectAPI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectionString = Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString"); // _configuration.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>();
+            _connectionString = Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString");
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace BaseProjectAPI
 
             #region Health check register and enable UI
             services.AddHealthChecks()
-                .AddNpgSql(_configuration.GetConnectionString("DefaultConnection"), name: "Postgresql", failureStatus: HealthStatus.Unhealthy, tags: new[] { "DataSource" })
+                .AddNpgSql(_connectionString, name: "Postgresql", failureStatus: HealthStatus.Unhealthy, tags: new[] { "DataSource" })
                 .AddCheck("AlwaysHealthy", () => HealthCheckResult.Healthy(), tags: new[] { "Example1" })
                 .AddCheck("AlwaysHealthyToo", () => HealthCheckResult.Healthy(), tags: new[] { "Example2" });
 
