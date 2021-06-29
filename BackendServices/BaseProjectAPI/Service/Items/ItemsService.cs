@@ -18,12 +18,16 @@ namespace BaseProjectAPI.Service.Items
 
         public async Task<IEnumerable<Item>> GetItemsList(CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-            return await _context.Items
+            token.ThrowIfCancellationRequested();           
+            var query = await _context.Items
                 .EnabledItems()
                 .SpecificYearsAgo(5)
                 .ToListAsync(token);
 
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-5.0
+            //query.ToQueryString();
+
+            return query;
             // just an example how to call Expression Func
             // bool d = false;
             // foreach (var item in r)

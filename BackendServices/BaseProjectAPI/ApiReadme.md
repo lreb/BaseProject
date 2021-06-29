@@ -85,6 +85,13 @@ This layer is on charge to perform several kind of tests to the base project
 ## Tools
 
 ### EF Core Power Tools
+
+- ToQueryString
+
 [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ErikEJ.EFCorePowerTools#review-details)
 [Official Repository](https://github.com/ErikEJ/EFCorePowerTools)
 
+
+## Docker
+docker build -f BaseProjectAPI\Dockerfile  -t demoimage:1.0 .
+docker container run --name baseapi -p 5000:80 demoimage:1.0

@@ -12,8 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
+using System.Text;
 
 namespace BaseProjectAPI
 {
@@ -36,7 +38,6 @@ namespace BaseProjectAPI
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
-            
         }
 
         /// <summary>
@@ -55,7 +56,35 @@ namespace BaseProjectAPI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _connectionString = Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString");
+            _connectionString = GetApplicationConnectionString(); //Environment.GetEnvironmentVariable("BaseProjectDefaultConnectionString");
+        }
+
+        private string GetApplicationConnectionString() 
+        {
+            string dbServer = Environment.GetEnvironmentVariable("BaseProjectDbServer");
+            string dbServerPort = Environment.GetEnvironmentVariable("BaseProjectDbServerPort");
+            string dbServerUser = Environment.GetEnvironmentVariable("BaseProjectDbServerUser");
+            string dbServerPassword = Environment.GetEnvironmentVariable("BaseProjectDbServerPassword");
+            string db = Environment.GetEnvironmentVariable("BaseProjectDb");
+
+            //if (String.IsNullOrEmpty(dbServer))
+            //    _logger.LogError($"didn't catch '{ nameof(dbServer)}' environment variable");
+
+            //if (String.IsNullOrEmpty(dbServerPort))
+            //    _logger.LogError($"didn't catch '{ nameof(dbServerPort)}' environment variable");
+
+            //if (String.IsNullOrEmpty(dbServerUser))
+            //    _logger.LogError($"didn't catch '{ nameof(dbServerUser)}' environment variable");
+
+            //if (String.IsNullOrEmpty(dbServerPassword))
+            //    _logger.LogError($"didn't catch '{ nameof(dbServerPassword)}' environment variable");
+
+            //if (String.IsNullOrEmpty(db))
+            //    _logger.LogError($"didn't catch '{ nameof(db)}' environment variable");
+
+            StringBuilder connectionString = new StringBuilder($"Server={dbServer};port={dbServerPort};user id={dbServerUser};password={dbServerPassword};database={db};pooling=true");
+
+            return connectionString.ToString();
         }
 
         /// <summary>

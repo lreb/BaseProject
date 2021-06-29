@@ -31,8 +31,8 @@ namespace BaseProjectAPI.Persistence.Seeds
             return new Faker<Item>()
                 .RuleFor(p => p.Id, s => ids++)
                 .RuleFor(p => p.Name, (s) => s.Name.FirstName(Gender.Female))
+                .RuleFor(p => p.Description, (s) => s.Name.JobDescriptor())
                 .RuleFor(p => p.Quantity, (s) => s.Random.Number(1, 10))
-
                 .RuleFor(p => p.IsEnabled, s => s.Random.Bool())
                 .RuleFor(p => p.CreatedOn, s => s.Date.Past(10, DateTime.Now));
         }
@@ -52,6 +52,25 @@ namespace BaseProjectAPI.Persistence.Seeds
 
                 .RuleFor(p => p.IsEnabled, s => s.Random.Bool())
                 .RuleFor(p => p.CreatedOn, s => s.Date.Past(10, DateTime.Now));
+        }
+
+        /// <summary>
+        /// Setup fluent API configurations
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        public static void FluentAPIConfiguration(this ModelBuilder modelBuilder)
+        {
+            // example: modelBuilder.Entity<Item>().HasIndex(p => p.Name);
+            //modelBuilder.Entity<Item>(e => e);
+
+            modelBuilder.Entity<Item>(builder => 
+            {
+                builder.HasIndex(p => new { p.Name, p.Quantity, p.CreatedOn });
+                builder.Property(s => s.Name).IsRequired().HasMaxLength(100);
+                builder.Property(s => s.Description).IsRequired().HasMaxLength(300);
+                builder.Property(x=>x.CreatedOn).HasDefaultValueSql("TIMEZONE('utc', NOW())").ValueGeneratedOnAdd();
+            });
+            
         }
     }
 }

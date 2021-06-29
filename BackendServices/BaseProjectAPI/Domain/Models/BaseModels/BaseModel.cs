@@ -10,6 +10,7 @@ namespace BaseProjectAPI.Domain.Models.BaseModels
         public bool IsEnabled { get; set; } = true;
         public DateTimeOffset CreatedOn { get; set; } = DateTime.UtcNow;
         public DateTimeOffset? DisabledOn { get; set; }
+        public DateTimeOffset? UpdatedOn { get; set; }
     }
 
     /// <summary>
@@ -19,5 +20,6 @@ namespace BaseProjectAPI.Domain.Models.BaseModels
     {
         public User CreatedBy { get; set; }
         public User DisabledBy { get; set; }
+        public User UpdatedBy { get; set; }
     }
 }
