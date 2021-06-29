@@ -74,5 +74,18 @@ Print the last 100 lines of a container’s logs
 `docker container logs --tail 100 web`
 
 ## Network
+
+The default Docker network configuration allows for the isolation of containers on the Docker host. This feature enables you to build and configure apps that can communicate securely with each other.
+Docker provides three pre-configured network configurations:
+
+- Bridge
+- Host
+- none
+
 List the networks
 `docker network ls`
+
+## Volumes vs Bind Mounts
+
+- With Bind Mount, a file or directory on the host machine is mounted into a container. The file or directory is referenced by its full or relative path on the host machine.
+- With Volume, a new directory is created within Docker's storage directory on the host machine, and Docker manages that directory's content.

@@ -7,6 +7,15 @@ It is an architectural style that structures an application as a collection of s
 - Independently deployable
 - Organized around business capabilities
 - Owned by a small team
+- Scalability
+- Availability
+- Resiliency
+- Flexibility
+- Independent, autonomous
+- Decentralized governance
+- Failure isolation
+- Auto-Provisioning
+- Continuous delivery through DevOps
 
 ![alt text](https://microservices.io/i/Microservice_Architecture.png)
 
@@ -46,6 +55,12 @@ Starts the web container more quickly, so the deployment is also faster
 - Developers have to put additional effort into implementing the mechanism of communication between the services
 - Handling use cases that span more than one service without using distributed transactions is not only tough but also requires communication and cooperation between different teams
 
+## Design patterns for microservices
+
+![alt text](https://cdn-images-1.medium.com/max/800/1*CKSVv4WkS8Okx572rX45HA.png)
+
+[more info...](https://dzone.com/articles/design-patterns-for-microservices-1)
+
 ## Keys
 
 ### Subdomains
@@ -75,4 +90,28 @@ An operation related to a table may affect many parties. Here, we can solve thes
 
 Solutions like RabbitMQ, Kafka, and ActiveMQ.
 
+### How is CQRS design pattern related to microservices?
+
+CQRS is another design pattern used in microservices architecture which will have a separate service, model, and database for insert operations in the database. This acts as a command layer and separate service, model, and database for query data that acts as a query layer.
+
+The command layer is used for inserting data into a data store. The query layer is used for querying data from the data store.
+
 [CQRS and Event Sourcing](https://dzone.com/articles/microservices-with-cqrs-and-event-sourcing)
+
+### What are some of the best practices related to microservices design and development?
+
+- Create separated databases for each microservice
+- Keep code at same level of maturity
+  - if you do a refactor/update of the code, you must preserve the original microservice, then test the performance of the improved microservice, once it is stable we can replace or mix the benefits of both code
+- Separate build for each microservice
+  - Create robust CI/CD pipeline for each service
+- Deploy in containers
+- Use the correct programing language for specific task
+- Always think in fault isolation (Single Responsibility Principle)
+- Use asynchronous communication to get loose coupling
+- Fail fast by using a circuit breaker to achieve fault tolerance
+- Proxy the microsrvice requests through an API Gateway
+- Versioning the microservices changes
+- Dedicated infraestructure to each microservices, take advantage of the serverless services
+- Create a separated release pipeline for each service
+- Create a organizational base solutions, you can have the same solutions for: security, logg, monitoring, API documentation, secrets management, config management, etc
