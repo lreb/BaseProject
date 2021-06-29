@@ -20,8 +20,13 @@ namespace BaseProjectAPI.Persistence
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // override model configurations
+            modelBuilder.FluentAPIConfiguration();
+
             //TODO: identify seeds fake vs system seeds
             modelBuilder.Seed();
         }
+
+        
     }
 }
