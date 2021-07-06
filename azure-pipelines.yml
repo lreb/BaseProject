@@ -55,15 +55,17 @@ steps:
       dir
     workingDirectory: $(Build.ArtifactStagingDirectory)
 
-- task: PublishBuildArtifacts@1
-  displayName: "Upload Artifacts Windows"
-  inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)' 
-        artifactName: 'Api_LatestBuild' 
-        
+
 - task: CopyFiles@2
   displayName: copy arm templates
   inputs:
     SourceFolder:  '$(Build.SourcesDirectory)/CloudInfrastructure/Azure'
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/iac'
+    
+- task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts Windows"
+  inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)' 
+        artifactName: 'Api_LatestBuild' 
+        
