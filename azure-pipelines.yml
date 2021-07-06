@@ -28,7 +28,7 @@ steps:
   inputs:
     command: 'build'
     arguments: '--no-restore'
-    projects: 'src/Base.API/Base.API.csproj'
+    projects: 'BackendServices/BaseProjectAPI/BaseProjectAPI.csproj'
 - task: CmdLine@2
   inputs:
     script: |
@@ -41,7 +41,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: 'src/Base.Test.Unit/Base.Test.Unit.csproj'
+    projects: 'BackendServices/BaseProject.Test/BaseProject.Test.csproj'
     arguments: '--no-restore'
   displayName: 'Run Tests'
 
@@ -50,7 +50,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: 'src/Base.API/Base.API.csproj'
+    projects: 'BackendServices/BaseProjectAPI/BaseProjectAPI.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore -o $(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)'
     modifyOutputPath: false
     zipAfterPublish: true
