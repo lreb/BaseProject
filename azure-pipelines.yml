@@ -13,22 +13,57 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  system.debug: true
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'Install .Net SDK'
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    projects: '**/*.csproj'
+  
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: "Build project - .Net Core 5.0.x"
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    arguments: '--no-restore'
+    projects: 'src/Base.API/Base.API.csproj'
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Write your commands here
+      
+      echo Hello world
+      
+      dir
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'test'
+    projects: 'src/Base.Test.Unit/Base.Test.Unit.csproj'
+    arguments: '--no-restore'
+  displayName: 'Run Tests'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish dotnet Api'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'src/Base.API/Base.API.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore -o $(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)'
+    modifyOutputPath: false
+    zipAfterPublish: true
+    
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Workin on: $(Build.ArtifactStagingDirectory)
+      dir
+    workingDirectory: $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts Windows"
+  inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)' 
+        artifactName: 'Api_LatestBuild' 
