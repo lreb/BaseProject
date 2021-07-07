@@ -63,9 +63,21 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/iac'
     
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Workin on: $(Build.ArtifactStagingDirectory)/iac
+      dir
+    workingDirectory: $(Build.ArtifactStagingDirectory)/iac
+    
 - task: PublishBuildArtifacts@1
   displayName: "Upload Artifacts Windows"
   inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)' 
         artifactName: 'Api_LatestBuild' 
         
+- task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts Windows"
+  inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/iac' 
+        artifactName: 'Api_LatestBuild' 
