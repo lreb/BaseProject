@@ -1,0 +1,83 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  system.debug: true
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'Install .Net SDK'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+  
+
+- task: DotNetCoreCLI@2
+  displayName: "Build project - .Net Core 5.0.x"
+  inputs:
+    command: 'build'
+    arguments: '--no-restore'
+    projects: 'BackendServices/BaseProjectAPI/BaseProjectAPI.csproj'
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Write your commands here
+      
+      echo Hello world
+      
+      dir
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish dotnet Api'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'BackendServices/BaseProjectAPI/BaseProjectAPI.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore -o $(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)'
+    modifyOutputPath: false
+    zipAfterPublish: true
+    
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Workin on: $(Build.ArtifactStagingDirectory)
+      dir
+    workingDirectory: $(Build.ArtifactStagingDirectory)
+
+
+- task: CopyFiles@2
+  displayName: copy arm templates
+  inputs:
+    SourceFolder:  '$(Build.SourcesDirectory)/CloudInfrastructure/Azure'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/iac'
+    
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Workin on: $(Build.ArtifactStagingDirectory)/iac
+      dir
+    workingDirectory: $(Build.ArtifactStagingDirectory)/iac
+    
+- task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts Windows"
+  inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/API_$(Build.BuildNumber)' 
+        artifactName: 'Api_LatestBuild' 
+        
+- task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts Windows"
+  inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/iac' 
+        artifactName: 'Api_LatestBuild' 
