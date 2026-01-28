@@ -5,7 +5,6 @@ using Asp.Versioning;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BaseAPI;
 
@@ -24,6 +23,9 @@ public class Program
             Log.Information("Starting web application");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add custom configuration files
+            builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
             // Add Serilog
             builder.Host.UseSerilog();
@@ -52,10 +54,10 @@ public class Program
 
             // Add Health Checks
             builder.Services.AddHealthChecks()
-                .AddSqlServer(
+                .AddNpgSql(
                     builder.Configuration.GetConnectionString("DefaultConnection") ?? "",
                     name: "database",
-                    tags: new[] { "db", "sql", "sqlserver" })
+                    tags: new[] { "db", "postgresql", "npgsql" })
                 .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy());
 
             // Add API Explorer

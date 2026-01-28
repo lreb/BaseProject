@@ -1,13 +1,12 @@
 {
   "Logging": {
     "LogLevel": {
-      "Default": "Debug",
-      "Microsoft.AspNetCore": "Information",
-      "Microsoft.EntityFrameworkCore.Database.Command": "Information",
-      "BaseAPI": "Debug"
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Information"
     }
   },
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BaseApiDb_Dev;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "Host=YOUR_HOST;Database=YOUR_DATABASE_DEV;Username=YOUR_USERNAME;Password=YOUR_PASSWORD;Port=5432;Pooling=true;"
   }
 }

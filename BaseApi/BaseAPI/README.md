@@ -76,28 +76,52 @@ BaseAPI/
    cd BaseApi/BaseAPI
    ```
 
-2. **Restore packages**
+2. **Configure your local database connection**
+   
+   **Option 1: Using PowerShell Script (Recommended)**
+   ```powershell
+   .\setup-local-config.ps1
+   # Follow the prompts to enter your database credentials
+   ```
+   
+   **Option 2: Manual Setup**
+   ```powershell
+   # Copy the template
+   Copy-Item appsettings.Local.json.template appsettings.Local.json
+   
+   # Edit with your database credentials
+   notepad appsettings.Local.json
+   ```
+   
+   **Option 3: Using .NET User Secrets**
+   ```powershell
+   dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=YOUR_HOST;Database=YOUR_DB;Username=YOUR_USER;Password=YOUR_PASS;Port=5432;"
+   ```
+
+3. **Restore packages and trust certificate**
    ```bash
    dotnet restore
    dotnet dev-certs https --trust
    ```
 
-3. **Update database** (migrations already created)
+4. **Update database** (migrations already created)
    ```bash
    dotnet ef database update
    ```
 
-4. **Run the application**
+5. **Run the application**
    ```bash
    dotnet run
    # Or: dotnet watch run
    ```
 
-5. **Test the API**
+6. **Test the API**
    - Swagger: https://localhost:5001/swagger
    - Health: https://localhost:5001/health
 
-**?? Issues?** See [Troubleshooting Guide](COMPLETE_PROJECT_GUIDE.md#-troubleshooting--common-issues) for solutions.
+**?? Having Issues?** Check the [Troubleshooting Guide](COMPLETE_PROJECT_GUIDE.md#-troubleshooting--common-issues) for solutions.
+
+**?? Configuration Security:** See [Configuration Guide](CONFIGURATION_GUIDE.md) for best practices on managing sensitive settings.
 
 **?? Detailed Setup:** Follow the [5-Minute Setup](COMPLETE_PROJECT_GUIDE.md#5-minute-setup) in the Complete Guide.
 

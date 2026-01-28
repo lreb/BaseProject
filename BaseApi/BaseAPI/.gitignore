@@ -143,7 +143,6 @@ _TeamCity*
 
 # AxoCover is a Code Coverage Tool
 .axoCover/*
-!.axoCover/settings.json
 
 # Coverlet is a free, cross platform Code Coverage Tool
 coverage*.json
@@ -403,5 +402,20 @@ FodyWeavers.xsd
 # Application specific
 logs/
 *.log
+
+# Environment-specific appsettings (DO NOT COMMIT)
+appsettings.Local.json
 appsettings.Development.json
 appsettings.Production.json
+appsettings.Staging.json
+
+# Keep template files for reference
+!appsettings.*.template
+
+# Environment files (if using .env approach)
+.env
+.env.local
+.env.*.local
+
+# Keep example files
+!.env.example
