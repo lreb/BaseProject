@@ -1,6 +1,7 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 import { homeReducer, HomeState } from '../features/home/store';
+import { productsReducer, ProductsState } from '../features/products/store';
 
 /**
  * Estado global de la aplicación
@@ -8,6 +9,7 @@ import { homeReducer, HomeState } from '../features/home/store';
  */
 export interface AppState {
   home: HomeState;
+  products: ProductsState;
   // Agregar aquí los estados de otros features
   // ejemplo: auth: AuthState;
 }
@@ -17,6 +19,7 @@ export interface AppState {
  */
 export const reducers: ActionReducerMap<AppState> = {
   home: homeReducer,
+  products: productsReducer,
   // Agregar aquí otros reducers
   // ejemplo: auth: authReducer
 };
