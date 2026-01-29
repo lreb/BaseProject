@@ -1,0 +1,12 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Error"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=PRODUCTION_HOST;Database=PRODUCTION_DATABASE;Username=PRODUCTION_USERNAME;Password=PRODUCTION_PASSWORD;Port=5432;Pooling=true;SSL Mode=Require;"
+  }
+}
