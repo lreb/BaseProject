@@ -415,7 +415,15 @@ appsettings.Staging.json
 # Environment files (if using .env approach)
 .env
 .env.local
+.env.production
 .env.*.local
+.env.deployment
 
 # Keep example files
 !.env.example
+!.env.deployment.example
+!.env.template
+
+# Deployment artifacts
+*.zip
+publish/
