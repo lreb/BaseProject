@@ -2,6 +2,9 @@
 
 This guide explains how to deploy the BaseAPI to an Ubuntu server using the automated deployment script.
 
+> 📋 **Quick Reference**: For a condensed deployment checklist, see [DEPLOYMENT_QUICK_REFERENCE.md](DEPLOYMENT_QUICK_REFERENCE.md)
+> 🔒 **Security**: For credential management best practices, see [SECURITY_GUIDE.md](SECURITY_GUIDE.md)
+
 ## 📋 Prerequisites
 
 ### On Your Development Machine (Windows)
@@ -18,7 +21,71 @@ This guide explains how to deploy the BaseAPI to an Ubuntu server using the auto
 
 ## 🔧 Initial Setup
 
-### 1. Create Deployment Configuration
+### 1. Configure Ubuntu Server Environment Variables (RECOMMENDED)
+
+For production deployments, database credentials and sensitive configuration should be stored securely on the server using environment variables, not in deployment files.
+
+**On your Ubuntu server**, upload and run the setup script:
+
+```bash
+# Upload the setup script (from your dev machine)
+scp setup-server-env.sh chinodev@192.168.100.142:/tmp/
+
+# SSH into the server
+ssh chinodev@192.168.100.142
+
+# Make the script executable
+chmod +x /tmp/setup-server-env.sh
+
+# Run the setup script
+sudo /tmp/setup-server-env.sh
+```
+
+The script will:
+1. ✅ Prompt for database credentials securely
+2. ✅ Create `/etc/baseapi/production.env` with secure permissions (600)
+3. ✅ Update the systemd service to load environment variables
+4. ✅ Build the connection string automatically
+5. ✅ Offer to restart the service
+
+**Example Setup Session:**
+```
+===================================
+  BaseAPI Production Setup
+===================================
+
+===> Creating secure environment directory...
+✅ Directory created
+
+===> Database Configuration
+  Database Host [localhost]: localhost
+  Database Port [5432]: 5432
+  Database Name [BaseApiDb_Prod]: BaseApiDb_Prod
+  Database Username [baseapi_user]: baseapi_user
+  Database Password: ********
+  Confirm password: ********
+
+===> Application Configuration
+  Environment [Production]: Production
+  Application URLs [http://localhost:5000]: http://localhost:5000
+
+===> Creating environment file...
+✅ Environment file created at /etc/baseapi/production.env
+
+===> Updating systemd service...
+✅ Added EnvironmentFile to service configuration
+
+===> Reloading systemd daemon...
+✅ Systemd daemon reloaded
+```
+
+> 🔒 **Security Benefits:**
+> - Credentials stored in `/etc/baseapi/production.env` with 600 permissions (root only)
+> - Never transmitted over network or stored in version control
+> - Systemd service automatically loads variables at startup
+> - Easy to rotate credentials without redeployment
+
+### 2. Create Deployment Configuration (Windows Dev Machine)
 
 Copy the example file and configure it with your server details:
 
@@ -26,7 +93,7 @@ Copy the example file and configure it with your server details:
 Copy-Item .env.deployment.example .env.deployment
 ```
 
-Edit `.env.deployment` and fill in your values:
+Edit `.env.deployment` with your SSH connection details:
 
 ```bash
 # SSH Connection Details
@@ -40,13 +107,14 @@ SERVER_APP_PATH=/var/www/netcore-baseapi
 SERVICE_NAME=netcore-baseapi
 
 # Application Settings
-APP_ZIP_NAME=myapi.zip
+APP_ZIP_NAME=net-api.zip
 LOCAL_PUBLISH_PATH=./publish
 ```
 
 > ⚠️ **IMPORTANT**: `.env.deployment` is in `.gitignore` and will NOT be committed!
+> ⚠️ **DO NOT** put database credentials in this file - they should be on the server only!
 
-### 2. Configure SSH Access (Recommended)
+### 3. Configure SSH Access (Recommended)
 
 For passwordless deployment, set up SSH key authentication:
 
@@ -63,11 +131,13 @@ Then add to `.env.deployment`:
 SSH_KEY_PATH=~/.ssh/id_rsa
 ```
 
-### 3. Verify Server Configuration
+### 4. Verify Server Configuration
 
 Ensure your Ubuntu server has the correct setup:
 
 #### Systemd Service (`/etc/systemd/system/netcore-baseapi.service`)
+
+**Updated configuration with environment file:**
 
 ```ini
 [Unit]
@@ -82,12 +152,34 @@ RestartSec=10
 KillSignal=SIGINT
 SyslogIdentifier=netcore-baseapi
 User=chinodev
-Environment=ASPNETCORE_ENVIRONMENT=Production
-Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+EnvironmentFile=/etc/baseapi/production.env
 
 [Install]
 WantedBy=multi-user.target
 ```
+
+> 📝 **Note:** The `EnvironmentFile` directive loads all variables from `/etc/baseapi/production.env`
+> automatically when the service starts. This includes the database connection string.
+
+**Legacy Configuration (Not Recommended - Less Secure):**
+
+If you prefer to set environment variables directly in the service file (not recommended for production):
+
+```ini
+[Service]
+WorkingDirectory=/var/www/netcore-baseapi
+ExecStart=/usr/bin/dotnet /var/www/netcore-baseapi/BaseAPI.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=netcore-baseapi
+User=chinodev
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=ConnectionStrings__DefaultConnection=Host=localhost;Database=BaseApiDb_Prod;Username=...;Password=...
+```
+
+⚠️ **Warning:** This exposes credentials to anyone who can read the service file!
 
 #### Nginx Configuration (`/etc/nginx/sites-available/default`)
 
@@ -213,196 +305,123 @@ Invoke-RestMethod http://192.168.100.142/health
 **Problem**: Database connection fails
 
 **Solution**:
-1. Ensure `appsettings.json` or environment variables have correct connection string
-2. For production, consider using environment variables in systemd service:
 
-```ini
-[Service]
-Environment=ConnectionStrings__DefaultConnection=Host=localhost;Database=BaseApiDb_Prod;Username=...;Password=...
-```
+1. **Verify environment variables are loaded** (most common issue):
+   ```bash
+   # Check the environment file exists
+   sudo cat /etc/baseapi/production.env
+   
+   # Verify systemd service references the environment file
+   sudo systemctl cat netcore-baseapi | grep EnvironmentFile
+   
+   # Restart service after any changes
+   sudo systemctl daemon-reload
+   sudo systemctl restart netcore-baseapi
+   ```
 
-### Permission Denied Errors
+2. **Test database connection manually**:
+   ```bash
+   # Install PostgreSQL client if not already installed
+   sudo apt-get install postgresql-client
+   
+   # Test connection using credentials from environment file
+   psql -h localhost -U baseapi_user -d BaseApiDb_Prod
+   ```
 
-**Problem**: Cannot write to `/var/www/netcore-baseapi`
+3. **Check logs for connection errors**:
+   ```bash
+   sudo journalctl -u netcore-baseapi -n 100 | grep -i "connection"
+   ```
 
-**Solution**:
-```bash
-sudo chown -R chinodev:chinodev /var/www/netcore-baseapi
-sudo chmod -R 755 /var/www/netcore-baseapi
-```
+4. **Update credentials** (if needed):
+   ```bash
+   # Re-run the setup script to update credentials
+   sudo /tmp/setup-server-env.sh
+   
+   # Or manually edit (requires root)
+   sudo nano /etc/baseapi/production.env
+   
+   # After editing, reload and restart
+   sudo systemctl daemon-reload
+   sudo systemctl restart netcore-baseapi
+   ```
 
-### Nginx 502 Bad Gateway
-
-**Problem**: Nginx shows 502 error
-
-**Solution**:
-1. Verify service is running: `sudo systemctl status netcore-baseapi`
-2. Check if app is listening on correct port (5000): `sudo netstat -tlnp | grep 5000`
-3. Review nginx error log: `sudo tail -f /var/log/nginx/error.log`
-
-## 📝 Manual Deployment Commands
-
-If you need to deploy manually without the script:
-
-```powershell
-# 1. Build and publish
-dotnet publish -c Release -o ./publish
-
-# 2. Create zip
-Compress-Archive -Path ./publish/* -DestinationPath myapi.zip -Force
-
-# 3. Upload to server
-scp myapi.zip chinodev@192.168.100.142:/tmp/
-
-# 4. Deploy on server (run via SSH)
-ssh chinodev@192.168.100.142
-
-sudo systemctl stop netcore-baseapi
-sudo rm -rf /var/www/netcore-baseapi/*
-sudo unzip /tmp/myapi.zip -d /var/www/netcore-baseapi
-sudo chown -R chinodev:chinodev /var/www/netcore-baseapi
-sudo systemctl start netcore-baseapi
-rm /tmp/myapi.zip
-```
+5. **Alternative: Use appsettings.Production.json** (less secure):
+   
+   Create `/var/www/netcore-baseapi/appsettings.Production.json`:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Host=localhost;Database=BaseApiDb_Prod;Username=...;Password=..."
+     }
+   }
+   ```
+   
+   ⚠️ **Warning:** This stores credentials in a file that may be readable by the service user.
 
 ## 🔒 Security Best Practices
 
-### Environment Variables
+### Environment Variables (RECOMMENDED)
 
-1. **Never commit** `.env.deployment` to version control
-2. Use SSH key authentication instead of passwords
-3. Restrict SSH key permissions:
-   ```powershell
-   icacls $env:USERPROFILE\.ssh\id_rsa /inheritance:r /grant:r "$($env:USERNAME):(R)"
+1. **Use the server-side setup script**:
+   ```bash
+   sudo ./setup-server-env.sh
    ```
+   
+   This ensures:
+   - ✅ Credentials stored in `/etc/baseapi/production.env` with 600 permissions
+   - ✅ Only root can read the environment file
+   - ✅ Service automatically loads variables at startup
+   - ✅ No credentials in version control or deployment files
+
+2. **Never commit** `.env.deployment` or any file with credentials to version control
+
+3. **Verify file permissions**:
+   ```bash
+   # Environment file should be 600 (rw-------)
+   ls -la /etc/baseapi/production.env
+   # Output: -rw------- 1 root root ... /etc/baseapi/production.env
+   ```
+
+4. **Rotate credentials regularly**:
+   ```bash
+   # Re-run setup script with new credentials
+   sudo ./setup-server-env.sh
+   
+   # Restart service
+   sudo systemctl restart netcore-baseapi
+   ```
+
+### SSH Access
+
+For passwordless deployment, set up SSH key authentication:
+
+```powershell
+# Generate SSH key (if you don't have one)
+ssh-keygen -t rsa -b 4096
+
+# Copy public key to server
+type $env:USERPROFILE\.ssh\id_rsa.pub | ssh chinodev@192.168.100.142 "cat >> ~/.ssh/authorized_keys"
+```
+
+Then add to `.env.deployment`:
+```bash
+SSH_KEY_PATH=~/.ssh/id_rsa
+```
+
+Restrict SSH key permissions:
+```powershell
+icacls $env:USERPROFILE\.ssh\id_rsa /inheritance:r /grant:r "$($env:USERNAME):(R)"
+```
 
 ### Database Credentials
 
-For production, use environment variables in the systemd service instead of appsettings.json:
+**✅ RECOMMENDED: Server-side environment variables**
+- Stored in `/etc/baseapi/production.env` with 600 permissions
+- Loaded by systemd service via `EnvironmentFile` directive
+- Never transmitted over network
 
-```ini
-[Service]
-Environment=ConnectionStrings__DefaultConnection=Host=...
-Environment=ASPNETCORE_ENVIRONMENT=Production
-```
-
-### File Permissions
-
-Ensure proper ownership:
-```bash
-sudo chown -R chinodev:chinodev /var/www/netcore-baseapi
-sudo chmod -R 755 /var/www/netcore-baseapi
-```
-
-## 🔄 Rollback Procedure
-
-If deployment fails and you need to rollback:
-
-1. Keep a backup of the previous deployment:
-   ```bash
-   sudo cp -r /var/www/netcore-baseapi /var/www/netcore-baseapi.backup
-   ```
-
-2. To restore:
-   ```bash
-   sudo systemctl stop netcore-baseapi
-   sudo rm -rf /var/www/netcore-baseapi/*
-   sudo cp -r /var/www/netcore-baseapi.backup/* /var/www/netcore-baseapi/
-   sudo systemctl start netcore-baseapi
-   ```
-
-## 📊 Useful Server Commands
-
-### Service Management
-
-```bash
-# Status
-sudo systemctl status netcore-baseapi
-
-# Start
-sudo systemctl start netcore-baseapi
-
-# Stop
-sudo systemctl stop netcore-baseapi
-
-# Restart
-sudo systemctl restart netcore-baseapi
-
-# Reload (without stopping)
-sudo systemctl reload netcore-baseapi
-
-# Enable on boot
-sudo systemctl enable netcore-baseapi
-
-# Disable on boot
-sudo systemctl disable netcore-baseapi
-```
-
-### Log Management
-
-```bash
-# View logs in real-time
-sudo journalctl -u netcore-baseapi -f
-
-# View last 50 lines
-sudo journalctl -u netcore-baseapi -n 50
-
-# View logs since today
-sudo journalctl -u netcore-baseapi --since today
-
-# View logs with priority error or higher
-sudo journalctl -u netcore-baseapi -p err
-
-# Clear old logs (older than 2 weeks)
-sudo journalctl --vacuum-time=2weeks
-```
-
-### Nginx Commands
-
-```bash
-# Test configuration
-sudo nginx -t
-
-# Reload configuration
-sudo systemctl reload nginx
-
-# View error logs
-sudo tail -f /var/log/nginx/error.log
-
-# View access logs
-sudo tail -f /var/log/nginx/access.log
-```
-
-## 🎯 Quick Reference
-
-### Deploy to Server
-```powershell
-.\deploy.ps1
-```
-
-### Check Service Status
-```powershell
-ssh chinodev@192.168.100.142 'sudo systemctl status netcore-baseapi'
-```
-
-### View Logs
-```powershell
-ssh chinodev@192.168.100.142 'sudo journalctl -u netcore-baseapi -f'
-```
-
-### Restart Service
-```powershell
-ssh chinodev@192.168.100.142 'sudo systemctl restart netcore-baseapi'
-```
-
-## 📞 Support
-
-If you encounter issues:
-1. Check the logs: `sudo journalctl -u netcore-baseapi -n 100`
-2. Verify service status: `sudo systemctl status netcore-baseapi`
-3. Check Nginx logs: `sudo tail -f /var/log/nginx/error.log`
-4. Review this troubleshooting guide
-
----
-
-**Last Updated**: January 29, 2026
+**❌ NOT RECOMMENDED: Embedded in deployment files**
+- `.env.deployment` - Should NOT contain database credentials
+- `appsettings.Production.json` - Should NOT be generated during deployment
+- Connection strings - Should NOT be in version control

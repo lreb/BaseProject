@@ -9,10 +9,12 @@ A production-ready ASP.NET Core Web API template following Clean Architecture pr
 This README provides a quick overview. For detailed information:
 
 - **[?? Complete Project Guide](COMPLETE_PROJECT_GUIDE.md)** - Comprehensive guide (setup to deployment)
+- **[?? Security & Configuration Guide](SECURITY_GUIDE.md)** - Production secrets management
+- **[?? Deployment Guide](DEPLOYMENT_GUIDE.md)** - Ubuntu server deployment
 - **[?? Startup Troubleshooting](STARTUP_TROUBLESHOOTING.md)** - Common issues & solutions
-- **[?? Best Practices](BEST_PRACTICES.md)** - Clean Architecture & coding standards
+- **[? Best Practices](BEST_PRACTICES.md)** - Clean Architecture & coding standards
 - **[?? Development Guide](DEVELOPMENT_GUIDE.md)** - Development workflows
-- **[? Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Quick feature reference
+- **[?? Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Quick feature reference
 
 ## ??? Architecture Overview
 
