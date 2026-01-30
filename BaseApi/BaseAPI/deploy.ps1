@@ -149,40 +149,13 @@ try {
         exit 0
     }
 
-    # Generate production appsettings
-    Write-Step "Generating production configuration..."
-    
-    $DB_HOST = Get-EnvVariable "DB_HOST"
-    $DB_PORT = Get-EnvVariable "DB_PORT" $false
-    $DB_NAME = Get-EnvVariable "DB_NAME"
-    $DB_USERNAME = Get-EnvVariable "DB_USERNAME"
-    $DB_PASSWORD = Get-EnvVariable "DB_PASSWORD"
-    
-    if ([string]::IsNullOrWhiteSpace($DB_PORT)) {
-        $DB_PORT = "5432"
-    }
-    
-    $connectionString = "Host=$DB_HOST;Database=$DB_NAME;Username=$DB_USERNAME;Password=$DB_PASSWORD;Port=$DB_PORT;Pooling=true;"
-    
-    $prodSettings = @{
-        "Logging" = @{
-            "LogLevel" = @{
-                "Default" = "Warning"
-                "Microsoft.AspNetCore" = "Warning"
-                "Microsoft.EntityFrameworkCore" = "Warning"
-            }
-        }
-        "AllowedHosts" = "*"
-        "ConnectionStrings" = @{
-            "DefaultConnection" = $connectionString
-        }
-    }
-    
-    $prodSettingsJson = $prodSettings | ConvertTo-Json -Depth 10
-    $prodSettingsJson | Out-File -FilePath "appsettings.Production.json" -Encoding UTF8
-    
-    Write-Success "Created appsettings.Production.json"
-    
+    # Note: Production configuration should be managed via environment variables on the server
+    # Run setup-server-env.sh on the Ubuntu server to configure production settings securely
+    Write-Host ""
+    Write-Host "Note: Production database configuration should be set on the server using:" -ForegroundColor Yellow
+    Write-Host "  sudo ./setup-server-env.sh" -ForegroundColor White
+    Write-Host ""
+
     # Clean previous publish
     Write-Step "Cleaning previous build artifacts..."
     if (Test-Path $LOCAL_PUBLISH_PATH) {
@@ -290,12 +263,6 @@ sudo systemctl status $SERVICE_NAME --no-pager -l
         exit 1
     }
 
-    # Clean up generated files
-    if (Test-Path "appsettings.Production.json") {
-        Remove-Item "appsettings.Production.json" -Force
-        Write-Host "Cleaned up temporary production config" -ForegroundColor Gray
-    }
-    
     # Success
     Write-Host ""
     Write-Host "====================================" -ForegroundColor Green
@@ -313,11 +280,6 @@ sudo systemctl status $SERVICE_NAME --no-pager -l
     Write-Error-Message "Deployment failed: $_"
     Write-Host ""
     Write-Host $_.ScriptStackTrace -ForegroundColor Red
-    
-    # Clean up generated files on error
-    if (Test-Path "appsettings.Production.json") {
-        Remove-Item "appsettings.Production.json" -Force
-    }
     
     exit 1
 }
